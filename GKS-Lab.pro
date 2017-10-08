@@ -24,10 +24,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    intitemdelegate.cpp
+        mainwindow.cpp
 
-HEADERS  += mainwindow.h \
-    intitemdelegate.h
+HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
+
+CONFIG += c++11

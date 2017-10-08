@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>280</width>
-    <height>379</height>
+    <width>752</width>
+    <height>473</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,204 +23,184 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLabel" name="sizeLabel">
+   <widget class="QTableWidget" name="objectTable">
     <property name="geometry">
      <rect>
-      <x>123</x>
-      <y>22</y>
-      <width>31</width>
+      <x>10</x>
+      <y>80</y>
+      <width>211</width>
+      <height>362</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOn</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="rowCount">
+     <number>12</number>
+    </property>
+    <property name="columnCount">
+     <number>1</number>
+    </property>
+    <attribute name="horizontalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderDefaultSectionSize">
+     <number>178</number>
+    </attribute>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <row/>
+    <column/>
+   </widget>
+   <widget class="QSlider" name="countSlider">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>211</width>
+      <height>19</height>
+     </rect>
+    </property>
+    <property name="minimum">
+     <number>1</number>
+    </property>
+    <property name="maximum">
+     <number>35</number>
+    </property>
+    <property name="pageStep">
+     <number>2</number>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+    <property name="tickPosition">
+     <enum>QSlider::TicksAbove</enum>
+    </property>
+    <property name="tickInterval">
+     <number>0</number>
+    </property>
+   </widget>
+   <widget class="QLabel" name="setAmountLabel">
+    <property name="geometry">
+     <rect>
+      <x>58</x>
+      <y>8</y>
+      <width>114</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>4</string>
-    </property>
-    <property name="textFormat">
-     <enum>Qt::AutoText</enum>
-    </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <string>Initialize system objects</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="decreaseSizeButton">
+   <widget class="QLCDNumber" name="countLCD">
     <property name="geometry">
      <rect>
-      <x>93</x>
-      <y>20</y>
-      <width>31</width>
-      <height>20</height>
+      <x>90</x>
+      <y>30</y>
+      <width>51</width>
+      <height>25</height>
      </rect>
     </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Уменьшить размер матрицы&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <property name="frameShape">
+     <enum>QFrame::WinPanel</enum>
     </property>
-    <property name="text">
-     <string>&lt;</string>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
+    </property>
+    <property name="midLineWidth">
+     <number>0</number>
+    </property>
+    <property name="smallDecimalPoint">
+     <bool>false</bool>
+    </property>
+    <property name="digitCount">
+     <number>2</number>
+    </property>
+    <property name="value" stdset="0">
+     <double>12.000000000000000</double>
+    </property>
+    <property name="intValue" stdset="0">
+     <number>12</number>
     </property>
    </widget>
-   <widget class="QPushButton" name="increaseSizeButton">
+   <widget class="QPlainTextEdit" name="resultTextEdit">
     <property name="geometry">
      <rect>
-      <x>153</x>
-      <y>20</y>
-      <width>31</width>
-      <height>20</height>
+      <x>230</x>
+      <y>10</y>
+      <width>511</width>
+      <height>431</height>
      </rect>
     </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Увеличить размер матрицы&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <property name="frameShape">
+     <enum>QFrame::WinPanel</enum>
     </property>
-    <property name="text">
-     <string>&gt;</string>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="textInteractionFlags">
+     <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+    </property>
+    <property name="placeholderText">
+     <string>This is result box. Object groups and resemblance matrix will be displayed here</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="startCalcButton">
+   <widget class="QPushButton" name="calculateButton">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
     <property name="geometry">
      <rect>
-      <x>88</x>
-      <y>160</y>
+      <x>65</x>
+      <y>446</y>
       <width>101</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>Начать расчет</string>
+     <string>Start Calculations</string>
+    </property>
+    <property name="default">
+     <bool>false</bool>
+    </property>
+    <property name="flat">
+     <bool>false</bool>
     </property>
    </widget>
-   <widget class="QTableWidget" name="tableWidget">
+   <widget class="QLabel" name="statusLabel">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>50</y>
-      <width>257</width>
-      <height>105</height>
+      <x>390</x>
+      <y>446</y>
+      <width>351</width>
+      <height>20</height>
      </rect>
     </property>
-    <property name="toolTip">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Матрица значений&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <property name="frameShape">
+     <enum>QFrame::WinPanel</enum>
     </property>
-    <property name="sizeAdjustPolicy">
-     <enum>QAbstractScrollArea::AdjustToContents</enum>
-    </property>
-    <property name="editTriggers">
-     <set>QAbstractItemView::AllEditTriggers</set>
-    </property>
-    <property name="alternatingRowColors">
-     <bool>false</bool>
-    </property>
-    <property name="textElideMode">
-     <enum>Qt::ElideMiddle</enum>
-    </property>
-    <property name="wordWrap">
-     <bool>false</bool>
-    </property>
-    <property name="rowCount">
-     <number>4</number>
-    </property>
-    <property name="columnCount">
-     <number>4</number>
-    </property>
-    <attribute name="horizontalHeaderVisible">
-     <bool>false</bool>
-    </attribute>
-    <attribute name="horizontalHeaderCascadingSectionResizes">
-     <bool>false</bool>
-    </attribute>
-    <attribute name="horizontalHeaderDefaultSectionSize">
-     <number>60</number>
-    </attribute>
-    <attribute name="horizontalHeaderMinimumSectionSize">
-     <number>60</number>
-    </attribute>
-    <attribute name="horizontalHeaderStretchLastSection">
-     <bool>false</bool>
-    </attribute>
-    <attribute name="verticalHeaderDefaultSectionSize">
-     <number>20</number>
-    </attribute>
-    <attribute name="verticalHeaderMinimumSectionSize">
-     <number>20</number>
-    </attribute>
-    <attribute name="verticalHeaderStretchLastSection">
-     <bool>false</bool>
-    </attribute>
-    <row/>
-    <row/>
-    <row/>
-    <row/>
-    <column/>
-    <column/>
-    <column/>
-    <column/>
-   </widget>
-   <widget class="QLabel" name="sizeInfoLabel">
-    <property name="geometry">
-     <rect>
-      <x>93</x>
-      <y>0</y>
-      <width>91</width>
-      <height>16</height>
-     </rect>
+    <property name="frameShadow">
+     <enum>QFrame::Sunken</enum>
     </property>
     <property name="text">
-     <string>Размер матрицы</string>
+     <string>To start calculations, input data in all object fields. Use ';' as separator</string>
     </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="resultDock">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>280</width>
-     <height>168</height>
-    </size>
-   </property>
-   <property name="baseSize">
-    <size>
-     <width>280</width>
-     <height>359</height>
-    </size>
-   </property>
-   <property name="floating">
-    <bool>false</bool>
-   </property>
-   <property name="features">
-    <set>QDockWidget::NoDockWidgetFeatures</set>
-   </property>
-   <property name="allowedAreas">
-    <set>Qt::BottomDockWidgetArea</set>
-   </property>
-   <property name="windowTitle">
-    <string>Результат расчетов</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="QWidget" name="resultDock_contents">
-    <widget class="QPlainTextEdit" name="resultTextEdit">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>4</y>
-       <width>260</width>
-       <height>131</height>
-      </rect>
-     </property>
-     <property name="textInteractionFlags">
-      <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-     </property>
-     <property name="placeholderText">
-      <string>Ожидание операции . . .</string>
-     </property>
-    </widget>
    </widget>
   </widget>
  </widget>

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -7,127 +8,96 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->tableWidget->setItemDelegate(new IntItemDelegate);
+    ui->countSlider->setValue(ui->objectTable->rowCount());
 
-    topGroupOffset_=QPoint(30,0);
-    lowGroupOffset_=QPoint(30,20);
-
-    textEditOffset_=QSize(60,0);
-    windowSizeOffset_=QSize(60,0);
-
-    ui->tableWidget->horizontalHeader()->setVisible(true);
-
-    //Triangulate initial table
-    for (int i = 0; i<ui->tableWidget->rowCount(); i++) {
-        for (int j = i; j<ui->tableWidget->columnCount(); j++) {
-            QTableWidgetItem *item = new QTableWidgetItem();
-
-            item->setFlags(item->flags()^Qt::ItemIsEnabled);
-            if (j == i)
-                item->setBackgroundColor(QColor::fromRgb(247,247,247));
-            else
-                item->setBackgroundColor(QColor::fromRgb(240,240,240));
-
-            ui->tableWidget->setItem(i, j, item);
-        }
-    }
-
-    QObject::connect(ui->increaseSizeButton, SIGNAL(clicked(bool)), this, SLOT(increaseTableSize()));
-    QObject::connect(ui->decreaseSizeButton, SIGNAL(clicked(bool)), this, SLOT(decreaseTableSize()));
-    QObject::connect(ui->startCalcButton, &QPushButton::clicked, this, &MainWindow::calculate);
+    QObject::connect(ui->countSlider, &QSlider::valueChanged, this, &MainWindow::updateCount);
+    QObject::connect(ui->calculateButton, &QPushButton::clicked, this, &MainWindow::calculate);
+    QObject::connect(ui->objectTable, &QTableWidget::cellChanged, this, &MainWindow::updateReadyStatus);
 }
 
-void MainWindow::increaseTableSize()
+void MainWindow::updateCount(int newSize)
 {
-    ui->tableWidget->insertColumn(ui->tableWidget->columnCount()-1);
-    ui->tableWidget->insertRow(ui->tableWidget->rowCount()-1);
-
-    ui->sizeLabel->setText(QString().number(ui->tableWidget->rowCount()));
-
-    adjustUi(true);
-}
-
-void MainWindow::decreaseTableSize()
-{
-    ui->tableWidget->removeColumn(ui->tableWidget->columnCount()-1);
-    ui->tableWidget->removeRow(ui->tableWidget->rowCount()-1);
-
-    ui->sizeLabel->setText(QString().number(ui->tableWidget->rowCount()));
-
-    adjustUi(false);
+    ui->countLCD->display(newSize);
+    ui->objectTable->setRowCount(newSize);
+    this->updateReadyStatus();
 }
 
 void MainWindow::calculate()
 {
+    //Parse data from cells and build occurence matrix
+    ui->statusLabel->setText("Calculation started!");
 
-}
+    QVector<QString> ops;
 
-void MainWindow::adjustUi(bool isExpanding)
-{
-    //Enable\disable buttons
-    if (ui->tableWidget->columnCount() == 20)
-        ui->increaseSizeButton->setDisabled(true);
-    if (ui->tableWidget->columnCount() <= 19)
-        ui->increaseSizeButton->setEnabled(true);
+    //Get all available operations
+    for (int i=0; i<ui->objectTable->rowCount(); i++) {
+        QStringList slist = ui->objectTable->item(i,0)->text().split(';');
 
-    if (ui->tableWidget->columnCount() == 2)
-        ui->decreaseSizeButton->setDisabled(true);
-    if (ui->tableWidget->columnCount() >= 3)
-        ui->decreaseSizeButton->setEnabled(true);
-
-    //"Triangulate" table, sans diagonal
-    for (int i = 0; i<ui->tableWidget->rowCount(); i++) {
-        for (int j = i; j<ui->tableWidget->columnCount(); j++) {
-            QTableWidgetItem *item = new QTableWidgetItem();
-
-            item->setFlags(item->flags()^Qt::ItemIsEnabled);
-            if (i == j)
-                item->setBackgroundColor(QColor::fromRgb(247, 247, 247));
-            else
-                item->setBackgroundColor(QColor::fromRgb(240, 240, 240));
-
-            ui->tableWidget->setItem(i, j, item);
+        for(QString& s : slist) {
+            if (!ops.contains(s))
+                ops.push_back(s);
         }
     }
 
-    //Adjust widget positions
-    if (isExpanding && ui->tableWidget->columnCount()>4) {
-        ui->tableWidget->adjustSize();
+    //Fill occurence matrix
+    //TODO: Proper smart pointer or container implementation
+    int** occurenceMatrix = new int*[ui->objectTable->rowCount()];
+    for (int i=0; i<ui->objectTable->rowCount(); i++) {
+        occurenceMatrix[i] = new int[ops.size()];
 
-        //QTableWidget::adjustSize() causes overlap on 11x11 table, need to set size manually
-        if(ui->tableWidget->columnCount()==11)
-            ui->tableWidget->resize(684,245);
+        for (int j=0; j<ops.size(); j++) {
 
-        if(ui->tableWidget->columnCount()>5)
-            windowSizeOffset_=QSize(60,20);
+            QStringList sortedList = ui->objectTable->item(i,0)->text().split(';');
+            std::sort(sortedList.begin(),sortedList.end());
 
-        this->setFixedSize(this->size()+windowSizeOffset_);
-
-        ui->sizeInfoLabel->move(ui->sizeInfoLabel->pos()+topGroupOffset_);
-        ui->decreaseSizeButton->move(ui->decreaseSizeButton->pos()+topGroupOffset_);
-        ui->sizeLabel->move(ui->sizeLabel->pos()+topGroupOffset_);
-        ui->increaseSizeButton->move(ui->increaseSizeButton->pos()+topGroupOffset_);
-
-        ui->startCalcButton->move(ui->startCalcButton->pos()+lowGroupOffset_);
-
-        ui->resultTextEdit->setFixedSize(ui->resultTextEdit->size()+textEditOffset_);
+            if (sortedList.contains(ops.at(j)))
+                occurenceMatrix[i][j]=1;
+            else
+                occurenceMatrix[i][j]=0;
+        }
     }
-    if (!isExpanding && ui->tableWidget->columnCount() >= 4) {
-        ui->tableWidget->adjustSize();
 
-        if(ui->tableWidget->columnCount()<4)
-            windowSizeOffset_=QSize(60,0);
+    //Call second part to continue
+}
 
-        this->setFixedSize(this->size()-windowSizeOffset_);
+void MainWindow::updateReadyStatus()
+{
+    //Check if all cells have data inside, then enable or disable calculation
+    for (int i=0; i<ui->objectTable->rowCount(); i++) {
+        if (ui->objectTable->item(i,0) == Q_NULLPTR) {
+            ui->calculateButton->setEnabled(false);
+            ui->statusLabel->setText("To start calculations, input data in all object fields. Use ';' as separator");
+            return;
+        }
+        else {
+            if (ui->objectTable->item(i,0)->text() == "") {
+                ui->calculateButton->setEnabled(false);
+                ui->statusLabel->setText("To start calculations, input data in all object fields. Use ';' as separator");
+                return;
+            }
+        }
+    }
+    ui->calculateButton->setEnabled(true);
+    ui->statusLabel->setText("Ready!");
+}
 
-        ui->sizeInfoLabel->move(ui->sizeInfoLabel->pos()-topGroupOffset_);
-        ui->decreaseSizeButton->move(ui->decreaseSizeButton->pos()-topGroupOffset_);
-        ui->sizeLabel->move(ui->sizeLabel->pos()-topGroupOffset_);
-        ui->increaseSizeButton->move(ui->increaseSizeButton->pos()-topGroupOffset_);
+void MainWindow::displayResults(int** resMatrix, QVector<QString> groups)
+{
+    ui->statusLabel->setText("Done!");
+    ui->resultTextEdit->clear();
+    ui->resultTextEdit->appendPlainText("Resemblace matrix: \n");
 
-        ui->startCalcButton->move(ui->startCalcButton->pos()-lowGroupOffset_);
+    for (int i=0; i<ui->objectTable->rowCount(); i++) {
+        for (int j=0; j<ui->objectTable->rowCount(); j++)
+            ui->resultTextEdit->appendPlainText(QString::number(resMatrix[i][j]).append(" "));
+        ui->resultTextEdit->appendPlainText("\n");
+    }
 
-        ui->resultTextEdit->setFixedSize(ui->resultTextEdit->size()-textEditOffset_);
+    ui->resultTextEdit->appendPlainText("\n\nGroups: \n");
+    for (int i=0; i<groups.size(); i++) {
+        ui->resultTextEdit->appendPlainText(QString::number(i+1).append(": "));
+        ui->resultTextEdit->appendPlainText(groups.at(i));
+        ui->resultTextEdit->appendPlainText("\n");
     }
 }
 
